@@ -1,19 +1,30 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { createBrowserSupabaseClient } from "@/lib/supabase-client";
 
 export default function AuthForm({ type = "login" }) {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const isLogin = type === "login";
+  const supabase = createBrowserSupabaseClient();
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user) {
+        router.push("/proyectos");
+      }
+    });
+  }, [router, supabase.auth]);
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -29,7 +40,7 @@ export default function AuthForm({ type = "login" }) {
 
       const { error } = result;
       if (error) {
-        alert(error.message);
+        setError(error.message);
         return;
       }
 

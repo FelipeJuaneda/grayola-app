@@ -1,54 +1,118 @@
-'use client'
+"use client";
 
-import { useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabase'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import Link from 'next/link'
+import { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import ProjectModal from "./ProjectModal";
+import { supabase } from "@/lib/supabase";
+import { toast } from "sonner";
+// import { deleteProjectById } from "@/helpers/projects";
 
-export default function ProjectList({ role }) {
-  const [projects, setProjects] = useState([])
-  const [loading, setLoading] = useState(true)
+export default function ProjectList({ projects, role, user }) {
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalMode, setModalMode] = useState("view"); // 'view' | 'edit'
+  const [selectedProject, setSelectedProject] = useState(null);
+  const [refreshing, setRefreshing] = useState(false); // para mejorar UX en futuro
 
-  useEffect(() => {
-    const fetchProjects = async () => {
-      const { data, error } = await supabase
-        .from('projects')
-        .select('*')
-        .order('created_at', { ascending: false })
+  const handleOpenModal = (mode, project) => {
+    setModalMode(mode);
+    setSelectedProject(project);
+    setModalOpen(true);
+  };
 
-      if (!error) setProjects(data)
-      setLoading(false)
+  const handleDelete = async (projectId) => {
+    const confirm = window.confirm("¿Estás seguro de eliminar este proyecto?");
+    if (!confirm) return;
+
+    try {
+      // await deleteProjectById(projectId);
+      toast.success("Proyecto eliminado");
+      setTimeout(() => window.location.reload(), 1000);
+    } catch (err) {
+      toast.error("Error al eliminar proyecto");
+      console.error(err.message);
     }
+  };
 
-    fetchProjects()
-  }, [])
-
-  if (loading) return <p className="text-center mt-4">Cargando proyectos...</p>
-  if (projects.length === 0) return <p className="text-center mt-4">No hay proyectos disponibles.</p>
+  if (!projects?.length) {
+    return (
+      <p className="text-center text-muted-foreground">
+        No hay proyectos disponibles.
+      </p>
+    );
+  }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      {projects.map((project) => (
-        <Card key={project.id}>
-          <CardHeader>
-            <CardTitle>{project.title}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="mb-2 text-gray-600">{project.description}</p>
-            <p className="text-sm text-muted-foreground">
-              Creado: {new Date(project.created_at).toLocaleDateString()}
-            </p>
+    <>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {projects.map((project) => (
+          <Card key={project.id} className="flex flex-col justify-between">
+            <CardHeader>
+              <CardTitle>{project.title}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground mb-2">
+                {project.description || "Sin descripción"}
+              </p>
 
-            {role === 'pm' && (
-              <div className="flex gap-2 mt-4">
-                <Button variant="secondary">Editar</Button>
-                <Button variant="destructive">Eliminar</Button>
+              {project.files?.length > 0 && (
+                <ul className="text-xs mb-2">
+                  {project.files.map((file, idx) => (
+                    <li key={idx}>
+                      <a
+                        href={file.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 underline"
+                      >
+                        {file.name}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              )}
+
+              <div className="flex gap-2 mt-2 flex-wrap">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleOpenModal("view", project)}
+                >
+                  Ver
+                </Button>
+
+                {role === "pm" && (
+                  <>
+                    <Button
+                      size="sm"
+                      onClick={() => handleOpenModal("edit", project)}
+                    >
+                      Editar
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="destructive"
+                      onClick={() => handleDelete(project.id)}
+                    >
+                      Eliminar
+                    </Button>
+                  </>
+                )}
               </div>
-            )}
-          </CardContent>
-        </Card>
-      ))}
-    </div>
-  )
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {selectedProject && (
+        <ProjectModal
+          mode={modalMode}
+          user={user}
+          project={selectedProject}
+          open={modalOpen}
+          onOpenChange={setModalOpen}
+        />
+      )}
+    </>
+  );
 }

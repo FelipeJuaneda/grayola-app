@@ -1,70 +1,111 @@
 "use client";
 
-import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { supabase } from "@/lib/supabase";
+import { useState } from "react";
+import {
+  Input,
+  Textarea,
+  Button,
+  Label,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui";
+import {
+  createProject,
+  updateProject,
+  uploadFiles,
+} from "@/helpers/projects/client";
 
-export default function ProjectForm({ user }) {
+const formSchema = z.object({
+  title: z.string().min(1, "El título es obligatorio"),
+  description: z.string().optional(),
+  files: z.any().optional(),
+});
+
+export default function ProjectForm({ initialData, user, onSuccess }) {
+  console.log("🚀 ~ ProjectForm ~ user:", user);
+  const isEdit = !!initialData;
   const router = useRouter();
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      title: initialData?.title || "",
+      description: initialData?.description || "",
+    },
+  });
 
-    const { error } = await supabase.from("projects").insert([
-      {
-        title,
-        description,
-        created_by: user.id,
-        assigned_to: null,
-        files: null,
-      },
-    ]);
+  const onSubmit = async (data) => {
+    setUploading(true);
 
-    if (error) {
-      alert("Error al crear proyecto: " + error.message);
-      setLoading(false);
-      return;
+    let uploadedFiles = [];
+    if (data.files && data.files.length > 0) {
+      uploadedFiles = await uploadFiles(data.files);
     }
 
-    router.push("/proyectos");
+    const projectData = {
+      title: data.title,
+      description: data.description,
+      files: uploadedFiles.length ? uploadedFiles : initialData?.files || [],
+    };
+
+    try {
+      if (isEdit) {
+        await updateProject(initialData.id, projectData);
+      } else {
+        await createProject(projectData, user.id);
+      }
+
+      if (onSuccess) onSuccess();
+      router.refresh();
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setUploading(false);
+    }
   };
 
   return (
-    <Card className="max-w-xl mx-auto mt-10">
+    <Card className="max-w-xl mx-auto">
       <CardHeader>
-        <CardTitle>Crear nuevo proyecto</CardTitle>
+        <CardTitle>{isEdit ? "Editar Proyecto" : "Nuevo Proyecto"}</CardTitle>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
             <Label htmlFor="title">Título</Label>
-            <Input
-              id="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              required
-            />
+            <Input id="title" {...register("title")} />
+            {errors.title && (
+              <p className="text-sm text-red-600">{errors.title.message}</p>
+            )}
           </div>
+
           <div>
             <Label htmlFor="description">Descripción</Label>
-            <Textarea
-              id="description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              required
-            />
+            <Textarea id="description" {...register("description")} />
           </div>
-          <Button type="submit" disabled={loading} className="w-full">
-            {loading ? "Guardando..." : "Crear Proyecto"}
+
+          <div>
+            <Label htmlFor="files">Archivos</Label>
+            <Input id="files" type="file" multiple {...register("files")} />
+          </div>
+
+          <Button type="submit" disabled={uploading} className="w-full">
+            {uploading
+              ? "Subiendo..."
+              : isEdit
+              ? "Guardar Cambios"
+              : "Crear Proyecto"}
           </Button>
         </form>
       </CardContent>
