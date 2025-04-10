@@ -3,14 +3,15 @@ import { createServerSupabaseClient } from "@/lib/supabase-server";
 import { cookies } from "next/headers";
 
 // Obtener proyectos por rol
+// Obtener proyectos por rol
 export const getProjectsByRole = async (user) => {
-  const supabase = createServerSupabaseClient();
+  const supabase = await createServerSupabaseClient();
   let query = supabase.from("projects").select("*");
 
-  if (user.role === "cliente") {
+  if (user.role === "client") {
     query = query.eq("created_by", user.id);
-  } else if (user.role === "diseñador") {
-    query = query.eq("assigned_to", user.id);
+  } else if (user.role === "designer") {
+    query = query.contains("assigned_to", [user.id]);
   }
 
   const { data, error } = await query.order("created_at", { ascending: false });
@@ -21,7 +22,7 @@ export const getProjectsByRole = async (user) => {
 
 // Crear proyecto
 export const createProject = async (data) => {
-  const supabase = createServerSupabaseClient({ cookies });
+  const supabase = await createServerSupabaseClient({ cookies });
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -38,8 +39,7 @@ export const createProject = async (data) => {
 
 // Actualizar proyecto
 export const updateProject = async (id, data) => {
-  const supabase = createServerSupabaseClient();
-  console.log("🚀 ~ updateProject ~ data:", data);
+  const supabase = await createServerSupabaseClient();
   const { error } = await supabase
     .from("projects")
     .update({
@@ -54,7 +54,7 @@ export const updateProject = async (id, data) => {
 
 // // Eliminar proyecto
 export const deleteProjectById = async (id) => {
-  const supabase = createServerSupabaseClient({ cookies });
+  const supabase = await createServerSupabaseClient({ cookies });
 
   const { error } = await supabase.from("projects").delete().eq("id", id);
   if (error) throw new Error(error.message);

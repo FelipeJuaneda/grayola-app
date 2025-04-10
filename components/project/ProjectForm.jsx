@@ -1,8 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { Input, Textarea, Button, Label } from "@/components/ui";
@@ -11,11 +10,10 @@ import {
   uploadFiles,
   deleteFilesFromStorage,
 } from "@/helpers/projects/storage";
-
-const formSchema = z.object({
-  title: z.string().min(1, "El título es obligatorio"),
-  description: z.string().optional(),
-});
+import { getDesigners } from "@/helpers/users/server";
+import { formSchema } from "@/schemas/form";
+import Select from "react-select";
+import { useLoading } from "@/context/Loading/LoadingContext";
 
 export default function ProjectForm({ initialData, user, onSuccess }) {
   const isEdit = !!initialData;
@@ -24,18 +22,41 @@ export default function ProjectForm({ initialData, user, onSuccess }) {
   const [newFiles, setNewFiles] = useState([]);
   const [existingFiles, setExistingFiles] = useState(initialData?.files || []);
   const [filesToDelete, setFilesToDelete] = useState([]);
-
+  const [designers, setDesigners] = useState([]);
+  const { setIsLoading } = useLoading();
   const {
     register,
     handleSubmit,
+    setValue,
+    watch,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: initialData?.title || "",
       description: initialData?.description || "",
+      assigned_to: initialData?.assigned_to || [],
     },
   });
+
+  const selectedDesigners = watch("assigned_to", []);
+
+  useEffect(() => {
+    const fetchDesigners = async () => {
+      if (user?.role === "pm") {
+        try {
+          setIsLoading(true);
+          const data = await getDesigners();
+          setDesigners(data);
+        } catch (error) {
+          console.error("Error al cargar diseñadores:", error);
+        } finally {
+          setIsLoading(false);
+        }
+      }
+    };
+    fetchDesigners();
+  }, [user]);
 
   const handleRemoveNewFile = (index) => {
     setNewFiles((prev) => prev.filter((_, i) => i !== index));
@@ -49,12 +70,13 @@ export default function ProjectForm({ initialData, user, onSuccess }) {
 
   const onSubmit = async (data) => {
     setUploading(true);
-
+    console.log("entraaa");
     try {
-      let uploadedFiles = [];
-      if (newFiles.length > 0) {
-        uploadedFiles = await uploadFiles(newFiles, initialData?.id || "tmp");
-      }
+      setIsLoading(true);
+      const uploadedFiles =
+        newFiles.length > 0
+          ? await uploadFiles(newFiles, initialData?.id || "tmp")
+          : [];
 
       const finalFiles = [...existingFiles, ...uploadedFiles];
 
@@ -62,6 +84,9 @@ export default function ProjectForm({ initialData, user, onSuccess }) {
         title: data.title,
         description: data.description,
         files: finalFiles,
+        ...(user.role === "pm" && {
+          assigned_to: selectedDesigners, 
+        }),
       };
 
       if (isEdit) {
@@ -82,6 +107,7 @@ export default function ProjectForm({ initialData, user, onSuccess }) {
     } catch (err) {
       console.error(err);
     } finally {
+      setIsLoading(false);
       setUploading(false);
     }
   };
@@ -101,12 +127,40 @@ export default function ProjectForm({ initialData, user, onSuccess }) {
         <Textarea id="description" {...register("description")} />
       </div>
 
+      {user.role === "pm" && (
+        <div>
+          <Label>Asignar a diseñador/es</Label>
+          <Select
+            isMulti
+            options={designers.map((designer) => ({
+              value: designer.id,
+              label: designer.full_name || designer.email,
+            }))}
+            value={designers
+              .filter((d) => selectedDesigners?.includes(d.id))
+              .map((d) => ({
+                value: d.id,
+                label: d.full_name || d.email,
+              }))}
+            onChange={(selected) =>
+              setValue(
+                "assigned_to",
+                selected.map((opt) => opt.value),
+                { shouldValidate: true }
+              )
+            }
+            className="react-select-container"
+            classNamePrefix="react-select"
+          />
+        </div>
+      )}
+
       {existingFiles.length > 0 && (
         <div>
           <Label>Archivos existentes</Label>
-          <ul className="text-sm text-gray-600 space-y-1">
+          <ul className="space-y-1 text-sm text-gray-600">
             {existingFiles.map((file, i) => (
-              <li key={i} className="flex justify-between items-center">
+              <li key={i} className="flex items-center justify-between">
                 <a
                   href={file.url}
                   target="_blank"
@@ -118,7 +172,7 @@ export default function ProjectForm({ initialData, user, onSuccess }) {
                 <button
                   type="button"
                   onClick={() => handleRemoveExistingFile(i)}
-                  className="text-red-500 text-xs ml-2"
+                  className="ml-2 text-xs text-red-500 cursor-pointer"
                 >
                   Eliminar
                 </button>
@@ -134,20 +188,19 @@ export default function ProjectForm({ initialData, user, onSuccess }) {
           id="files"
           type="file"
           multiple
-          onChange={(e) => {
-            const selected = Array.from(e.target.files);
-            setNewFiles((prev) => [...prev, ...selected]);
-          }}
+          onChange={(e) =>
+            setNewFiles((prev) => [...prev, ...Array.from(e.target.files)])
+          }
         />
         {newFiles.length > 0 && (
-          <ul className="text-sm text-gray-600 mt-2 space-y-1">
+          <ul className="mt-2 space-y-1 text-sm text-gray-600">
             {newFiles.map((file, index) => (
-              <li key={index} className="flex justify-between items-center">
+              <li key={index} className="flex items-center justify-between">
                 {file.name}
                 <button
                   type="button"
                   onClick={() => handleRemoveNewFile(index)}
-                  className="text-red-500 text-xs ml-2"
+                  className="ml-2 text-xs text-red-500 cursor-pointer"
                 >
                   Eliminar
                 </button>

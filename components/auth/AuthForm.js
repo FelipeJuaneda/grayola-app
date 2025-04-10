@@ -11,11 +11,12 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Image from "next/image";
+import { useLoading } from "@/context/Loading/LoadingContext";
 
 export default function AuthForm({ type = "login" }) {
   const router = useRouter();
   const isLogin = type === "login";
-
+  const { setIsLoading, isLoading } = useLoading();
   const {
     register,
     handleSubmit,
@@ -23,13 +24,15 @@ export default function AuthForm({ type = "login" }) {
   } = useForm({
     resolver: zodResolver(authSchema),
   });
+  console.log("🚀 ~ AuthForm ~ isSubmitting:", isSubmitting);
 
   const onSubmit = async (values) => {
     try {
+      setIsLoading(true);
       const { error } = isLogin
-      ? await loginUser(values.email, values.password)
-      : await registerUser(values.email, values.password);
-      
+        ? await loginUser(values.email, values.password)
+        : await registerUser(values.email, values.password);
+
       if (error) {
         toast.error(error.message);
         return;
@@ -44,32 +47,34 @@ export default function AuthForm({ type = "login" }) {
     } catch (err) {
       console.error(err);
       toast.error("Ocurrió un error inesperado.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen grid grid-cols-1 md:grid-cols-2">
-      <div className="hidden md:block relative min-h-screen bg-gray-100 overflow-hidden">
+    <div className="grid min-h-screen grid-cols-1 md:grid-cols-2">
+      <div className="relative hidden min-h-screen overflow-hidden bg-gray-100 md:block">
         <Image
           src="/ilustracionAuth.png"
           alt="Diseño colaborativo"
           fill
           priority
           draggable={false}
-          className="object-cover object-top-left select-none"
+          className="object-cover select-none object-top-left"
           sizes="(min-width: 768px) 50vw, 100vw"
         />
 
-        <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-r from-transparent to-white z-10" />
+        <div className="absolute inset-y-0 right-0 z-10 w-32 bg-gradient-to-r from-transparent to-white" />
       </div>
 
       <div className="flex items-center justify-center px-4 py-12 bg-white">
-        <Card className="w-full max-w-md shadow-xl border border-gray-200">
+        <Card className="w-full max-w-md border border-gray-200 shadow-xl">
           <CardHeader className="space-y-2">
-            <CardTitle className="text-center text-2xl font-bold tracking-tight">
+            <CardTitle className="text-2xl font-bold tracking-tight text-center">
               {isLogin ? "Iniciar Sesión" : "Crear Cuenta"}
             </CardTitle>
-            <p className="text-sm text-muted-foreground text-center">
+            <p className="text-sm text-center text-muted-foreground">
               {isLogin
                 ? "Ingresá tus datos para continuar"
                 : "Registrate para empezar a usar Grayola"}
@@ -86,7 +91,7 @@ export default function AuthForm({ type = "login" }) {
                   {...register("email")}
                 />
                 {errors.email && (
-                  <p className="text-sm text-red-600 mt-1">
+                  <p className="mt-1 text-sm text-red-600">
                     {errors.email.message}
                   </p>
                 )}
@@ -101,14 +106,18 @@ export default function AuthForm({ type = "login" }) {
                   {...register("password")}
                 />
                 {errors.password && (
-                  <p className="text-sm text-red-600 mt-1">
+                  <p className="mt-1 text-sm text-red-600">
                     {errors.password.message}
                   </p>
                 )}
               </div>
 
-              <Button type="submit" className="w-full" disabled={isSubmitting}>
-                {isSubmitting
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={isSubmitting || isLoading}
+              >
+                {isSubmitting || isLoading
                   ? "Cargando..."
                   : isLogin
                   ? "Ingresar"
@@ -116,13 +125,13 @@ export default function AuthForm({ type = "login" }) {
               </Button>
             </form>
 
-            <div className="mt-4 text-center text-sm text-muted-foreground">
+            <div className="mt-4 text-sm text-center text-muted-foreground">
               {isLogin ? (
                 <>
                   ¿No tenés cuenta?{" "}
                   <Button
                     variant="link"
-                    className="p-0 h-auto text-sm font-medium mt-2"
+                    className="h-auto p-0 mt-2 text-sm font-medium cursor-pointer"
                     onClick={() => router.push("/register")}
                   >
                     Registrate
@@ -133,7 +142,7 @@ export default function AuthForm({ type = "login" }) {
                   ¿Ya tenés una cuenta?{" "}
                   <Button
                     variant="link"
-                    className="p-0 h-auto text-sm font-medium mt-2 cursor-pointer"
+                    className="h-auto p-0 mt-2 text-sm font-medium cursor-pointer"
                     onClick={() => router.push("/login")}
                   >
                     Iniciar sesión

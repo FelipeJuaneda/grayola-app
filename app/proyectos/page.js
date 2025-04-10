@@ -1,6 +1,6 @@
-import { getUserWithRole } from '@/helpers/auth/server';
-import { getProjectsByRole } from '@/helpers/projects/server';
-import ProjectListClient from '../../components/project/ProjectList.client';
+import { getUserWithRole } from "@/helpers/users/server";
+import { getProjectsByRole } from "@/helpers/projects/server";
+import ProjectListClient from "../../components/project/ProjectListContainer";
 
 export default async function ProyectosPage() {
   const user = await getUserWithRole();
@@ -8,7 +8,9 @@ export default async function ProyectosPage() {
 
   return (
     <section className="w-full">
-      <ProjectListClient projects={projects} user={user} />
+      <div className="container px-4 mx-auto sm:px-6 lg:px-8">
+        <ProjectListClient projects={projects} user={user} />
+      </div>
     </section>
   );
 }

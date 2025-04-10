@@ -1,5 +1,5 @@
 import Navbar from "@/components/layout/NavBar";
-import { getUserWithRole } from "@/helpers/auth/server";
+import { getUserWithRole } from "@/helpers/users/server";
 import { redirect } from "next/navigation";
 
 export default async function ProyectosLayout({ children }) {
