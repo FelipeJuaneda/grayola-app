@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import ProjectModal from "./ProjectModal";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
-// import { deleteProjectById } from "@/helpers/projects";
+import { deleteProjectById } from "@/helpers/projects/server";
 
 export default function ProjectList({ projects, role, user }) {
   const [modalOpen, setModalOpen] = useState(false);
@@ -25,7 +25,7 @@ export default function ProjectList({ projects, role, user }) {
     if (!confirm) return;
 
     try {
-      // await deleteProjectById(projectId);
+      await deleteProjectById(projectId);
       toast.success("Proyecto eliminado");
       setTimeout(() => window.location.reload(), 1000);
     } catch (err) {

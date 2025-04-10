@@ -15,11 +15,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui";
+
 import {
   createProject,
   updateProject,
   uploadFiles,
-} from "@/helpers/projects/client";
+} from "@/helpers/projects/server";
 
 const formSchema = z.object({
   title: z.string().min(1, "El título es obligatorio"),
@@ -28,6 +29,7 @@ const formSchema = z.object({
 });
 
 export default function ProjectForm({ initialData, user, onSuccess }) {
+  console.log("🚀 ~ ProjectForm ~ initialData:", initialData);
   console.log("🚀 ~ ProjectForm ~ user:", user);
   const isEdit = !!initialData;
   const router = useRouter();

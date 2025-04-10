@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { createBrowserSupabaseClient } from "@/lib/supabase-client";
+import { supabase } from "@/lib/supabase-client";
 
 export default function AuthForm({ type = "login" }) {
   const router = useRouter();
@@ -15,16 +15,6 @@ export default function AuthForm({ type = "login" }) {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const isLogin = type === "login";
-  const supabase = createBrowserSupabaseClient();
-
-  useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (user) {
-        router.push("/proyectos");
-      }
-    });
-  }, [router, supabase.auth]);
-  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
