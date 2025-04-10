@@ -10,7 +10,9 @@ export default function ProjectListClient({ projects, user }) {
 
   return (
     <>
-      <div className="flex justify-end mb-4">
+
+      <div className="flex justify-between items-center mb-4">
+      <h1 className="text-2xl font-bold">Proyectos</h1>
         {(user.role === "cliente" || user.role === "pm") && (
           <Button onClick={() => setModalOpen(true)}>Nuevo Proyecto</Button>
         )}

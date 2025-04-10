@@ -60,31 +60,3 @@ export const deleteProjectById = async (id) => {
   if (error) throw new Error(error.message);
   return true;
 };
-
-// Subir archivos a Supabase
-export const uploadFiles = async (files) => {
-  const supabase = createServerSupabaseClient({ cookies });
-
-  const uploadedFiles = [];
-
-  for (const file of files) {
-    const { data, error } = await supabase.storage
-      .from("projects")
-      .upload(`${Date.now()}-${file.name}`, file);
-
-    if (error) {
-      console.error("Error al subir archivo:", error.message);
-      continue;
-    }
-
-    const publicUrl = supabase.storage.from("projects").getPublicUrl(data.path)
-      .data.publicUrl;
-
-    uploadedFiles.push({
-      name: file.name,
-      url: publicUrl,
-    });
-  }
-
-  return uploadedFiles;
-};

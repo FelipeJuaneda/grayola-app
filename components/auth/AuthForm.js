@@ -1,90 +1,149 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { authSchema } from "@/schemas/auth";
+import { loginUser, registerUser } from "@/helpers/auth/client";
+import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { supabase } from "@/lib/supabase-client";
+import Image from "next/image";
 
 export default function AuthForm({ type = "login" }) {
   const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
   const isLogin = type === "login";
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    resolver: zodResolver(authSchema),
+  });
 
+  const onSubmit = async (values) => {
     try {
-      let result;
-      if (isLogin) {
-        result = await supabase.auth.signInWithPassword({ email, password });
-      } else {
-        result = await supabase.auth.signUp({ email, password });
-      }
-
-      const { error } = result;
+      const { error } = isLogin
+      ? await loginUser(values.email, values.password)
+      : await registerUser(values.email, values.password);
+      
       if (error) {
-        setError(error.message);
+        toast.error(error.message);
         return;
       }
 
       if (isLogin) {
         router.push("/proyectos");
       } else {
-        alert("Cuenta creada. Ahora iniciá sesión.");
+        toast.success("Cuenta creada. Ahora iniciá sesión.");
         router.push("/login");
       }
     } catch (err) {
       console.error(err);
-    } finally {
-      setLoading(false);
+      toast.error("Ocurrió un error inesperado.");
     }
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50">
-      <Card className="w-full max-w-md shadow-md">
-        <CardHeader>
-          <CardTitle className="text-center text-xl">
-            {isLogin ? "Iniciar Sesión" : "Crear Cuenta"}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <Label htmlFor="email">Correo</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="tu@email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
+    <div className="min-h-screen grid grid-cols-1 md:grid-cols-2">
+      <div className="hidden md:block relative min-h-screen bg-gray-100 overflow-hidden">
+        <Image
+          src="/ilustracionAuth.png"
+          alt="Diseño colaborativo"
+          fill
+          priority
+          draggable={false}
+          className="object-cover object-top-left select-none"
+          sizes="(min-width: 768px) 50vw, 100vw"
+        />
+
+        <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-r from-transparent to-white z-10" />
+      </div>
+
+      <div className="flex items-center justify-center px-4 py-12 bg-white">
+        <Card className="w-full max-w-md shadow-xl border border-gray-200">
+          <CardHeader className="space-y-2">
+            <CardTitle className="text-center text-2xl font-bold tracking-tight">
+              {isLogin ? "Iniciar Sesión" : "Crear Cuenta"}
+            </CardTitle>
+            <p className="text-sm text-muted-foreground text-center">
+              {isLogin
+                ? "Ingresá tus datos para continuar"
+                : "Registrate para empezar a usar Grayola"}
+            </p>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+              <div>
+                <Label htmlFor="email">Correo</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="ejemplo@grayola.com"
+                  {...register("email")}
+                />
+                {errors.email && (
+                  <p className="text-sm text-red-600 mt-1">
+                    {errors.email.message}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <Label htmlFor="password">Contraseña</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="••••••••"
+                  {...register("password")}
+                />
+                {errors.password && (
+                  <p className="text-sm text-red-600 mt-1">
+                    {errors.password.message}
+                  </p>
+                )}
+              </div>
+
+              <Button type="submit" className="w-full" disabled={isSubmitting}>
+                {isSubmitting
+                  ? "Cargando..."
+                  : isLogin
+                  ? "Ingresar"
+                  : "Registrarse"}
+              </Button>
+            </form>
+
+            <div className="mt-4 text-center text-sm text-muted-foreground">
+              {isLogin ? (
+                <>
+                  ¿No tenés cuenta?{" "}
+                  <Button
+                    variant="link"
+                    className="p-0 h-auto text-sm font-medium mt-2"
+                    onClick={() => router.push("/register")}
+                  >
+                    Registrate
+                  </Button>
+                </>
+              ) : (
+                <>
+                  ¿Ya tenés una cuenta?{" "}
+                  <Button
+                    variant="link"
+                    className="p-0 h-auto text-sm font-medium mt-2 cursor-pointer"
+                    onClick={() => router.push("/login")}
+                  >
+                    Iniciar sesión
+                  </Button>
+                </>
+              )}
             </div>
-            <div>
-              <Label htmlFor="password">Contraseña</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Cargando..." : isLogin ? "Ingresar" : "Registrarse"}
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
