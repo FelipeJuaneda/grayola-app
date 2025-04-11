@@ -11,7 +11,7 @@ export const uploadFiles = async (files, projectId) => {
       .upload(filePath, file);
 
     if (error) {
-      console.error("❌ Error al subir archivo:", error.message);
+      console.error("Error al subir archivo:", error.message);
       continue;
     }
 
@@ -33,6 +33,6 @@ export const deleteFilesFromStorage = async (filePaths = []) => {
   const { error } = await supabase.storage.from("projects").remove(filePaths);
 
   if (error) {
-    console.error("❌ Error al eliminar archivos:", error.message);
+    console.error("Error al eliminar archivos:", error.message);
   }
 };

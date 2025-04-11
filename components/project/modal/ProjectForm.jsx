@@ -24,6 +24,7 @@ export default function ProjectForm({ initialData, user, onSuccess }) {
   const [filesToDelete, setFilesToDelete] = useState([]);
   const [designers, setDesigners] = useState([]);
   const { setIsLoading } = useLoading();
+
   const {
     register,
     handleSubmit,
@@ -70,7 +71,6 @@ export default function ProjectForm({ initialData, user, onSuccess }) {
 
   const onSubmit = async (data) => {
     setUploading(true);
-    console.log("entraaa");
     try {
       setIsLoading(true);
       const uploadedFiles =
@@ -85,7 +85,7 @@ export default function ProjectForm({ initialData, user, onSuccess }) {
         description: data.description,
         files: finalFiles,
         ...(user.role === "pm" && {
-          assigned_to: selectedDesigners, 
+          assigned_to: selectedDesigners,
         }),
       };
 
@@ -149,16 +149,48 @@ export default function ProjectForm({ initialData, user, onSuccess }) {
                 { shouldValidate: true }
               )
             }
-            className="react-select-container"
+            styles={{
+              multiValue: (base) => ({
+                ...base,
+                backgroundColor: "hsl(var(--muted))",
+                border: "1px solid hsl(var(--border))",
+              }),
+              multiValueLabel: (base) => ({
+                ...base,
+                color: "hsl(var(--foreground))",
+                fontWeight: 500,
+              }),
+              multiValueRemove: (base) => ({
+                ...base,
+                color: "hsl(var(--destructive))",
+                ":hover": {
+                  color: "hsl(var(--destructive) / 0.8)",
+                  backgroundColor: "transparent",
+                },
+              }),
+            }}
             classNamePrefix="react-select"
+            className="react-select-container"
+            theme={(theme) => ({
+              ...theme,
+              borderRadius: 6,
+              colors: {
+                ...theme.colors,
+                neutral0: "var(--card)",
+                neutral80: "var(--foreground)",
+                primary25: "var(--muted)",
+                primary: "var(--primary)",
+              },
+            })}
           />
         </div>
       )}
 
+      {/* Archivos existentes */}
       {existingFiles.length > 0 && (
         <div>
           <Label>Archivos existentes</Label>
-          <ul className="space-y-1 text-sm text-gray-600">
+          <ul className="space-y-1 text-sm text-gray-600 dark:text-gray-300">
             {existingFiles.map((file, i) => (
               <li key={i} className="flex items-center justify-between">
                 <a
@@ -182,6 +214,7 @@ export default function ProjectForm({ initialData, user, onSuccess }) {
         </div>
       )}
 
+      {/* Archivos nuevos */}
       <div>
         <Label htmlFor="files">Archivos nuevos</Label>
         <Input
@@ -193,7 +226,7 @@ export default function ProjectForm({ initialData, user, onSuccess }) {
           }
         />
         {newFiles.length > 0 && (
-          <ul className="mt-2 space-y-1 text-sm text-gray-600">
+          <ul className="mt-2 space-y-1 text-sm text-gray-600 dark:text-gray-300">
             {newFiles.map((file, index) => (
               <li key={index} className="flex items-center justify-between">
                 {file.name}

@@ -120,14 +120,30 @@
     @apply bg-background text-foreground;
   }
 }
+html,
+body {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
 
-/* soporte base para react-select */
-.react-select__control {
-  @apply border border-gray-300 rounded-md shadow-sm;
-}
+/* Estilos base */
+
 .react-select__menu {
-  @apply z-50;
+  @apply z-[9999] bg-card text-foreground border border-border shadow-md;
 }
+
 .react-select__multi-value {
-  @apply px-2 text-blue-800 bg-blue-100 rounded;
+  @apply border rounded-sm bg-muted text-muted-foreground border-border;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.react-select__multi-value__label {
+  @apply text-foreground;
+}
+
+.react-select__multi-value__remove {
+  @apply text-destructive hover:text-destructive/80;
+}
+
+.react-select__control {
+  @apply border rounded-md border-border bg-card text-foreground;
 }

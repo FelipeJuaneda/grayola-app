@@ -10,13 +10,16 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import Image from "next/image";
 import { useLoading } from "@/context/Loading/LoadingContext";
+import ParticlesBackground from "../particles/ParticlesBackground";
+import { useTheme } from "next-themes";
 
 export default function AuthForm({ type = "login" }) {
   const router = useRouter();
   const isLogin = type === "login";
   const { setIsLoading, isLoading } = useLoading();
+  const { resolvedTheme } = useTheme();
+
   const {
     register,
     handleSubmit,
@@ -24,7 +27,6 @@ export default function AuthForm({ type = "login" }) {
   } = useForm({
     resolver: zodResolver(authSchema),
   });
-  console.log("🚀 ~ AuthForm ~ isSubmitting:", isSubmitting);
 
   const onSubmit = async (values) => {
     try {
@@ -54,22 +56,19 @@ export default function AuthForm({ type = "login" }) {
 
   return (
     <div className="grid min-h-screen grid-cols-1 md:grid-cols-2">
-      <div className="relative hidden min-h-screen overflow-hidden bg-gray-100 md:block">
-        <Image
-          src="/ilustracionAuth.png"
-          alt="Diseño colaborativo"
-          fill
-          priority
-          draggable={false}
-          className="object-cover select-none object-top-left"
-          sizes="(min-width: 768px) 50vw, 100vw"
-        />
-
-        <div className="absolute inset-y-0 right-0 z-10 w-32 bg-gradient-to-r from-transparent to-white" />
+      <div className="relative hidden min-h-screen md:block">
+        <ParticlesBackground />
+        {resolvedTheme && (
+          <div
+            className={`absolute inset-y-0 right-0 z-10 w-32 bg-gradient-to-r from-transparent ${
+              resolvedTheme === "dark" ? "to-neutral-950" : "to-white"
+            }`}
+          />
+        )}
       </div>
 
-      <div className="flex items-center justify-center px-4 py-12 bg-white">
-        <Card className="w-full max-w-md border border-gray-200 shadow-xl">
+      <div className="flex items-center justify-center px-4 py-12 bg-white dark:bg-neutral-950">
+        <Card className="w-full max-w-md border border-gray-200 shadow-xl dark:border-neutral-800 dark:bg-neutral-900">
           <CardHeader className="space-y-2">
             <CardTitle className="text-2xl font-bold tracking-tight text-center">
               {isLogin ? "Iniciar Sesión" : "Crear Cuenta"}
@@ -80,6 +79,7 @@ export default function AuthForm({ type = "login" }) {
                 : "Registrate para empezar a usar Grayola"}
             </p>
           </CardHeader>
+
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div>

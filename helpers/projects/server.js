@@ -3,7 +3,6 @@ import { createServerSupabaseClient } from "@/lib/supabase-server";
 import { cookies } from "next/headers";
 
 // Obtener proyectos por rol
-// Obtener proyectos por rol
 export const getProjectsByRole = async (user) => {
   const supabase = await createServerSupabaseClient();
   let query = supabase.from("projects").select("*");

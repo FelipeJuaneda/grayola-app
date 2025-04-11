@@ -3,18 +3,18 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import ProjectList from "@/components/project/ProjectList";
-import ProjectModal from "@/components/project/ProjectModal";
-import {
-  deleteProjectById,
-  getProjectsByRole,
-} from "@/helpers/projects/server";
+import ProjectModal from "@/components/project/modal/ProjectModalContainer";
+import { deleteProjectById } from "@/helpers/projects/server";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { useLoading } from "@/context/Loading/LoadingContext";
 
 export default function ProjectListContainer({ projects, user }) {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState("create");
   const [selectedProject, setSelectedProject] = useState(null);
-  // const [projectList, setProjectList] = useState(projects);
+  const route = useRouter();
+  const { setIsLoading } = useLoading();
 
   const handleOpenModal = (mode, project = null) => {
     setModalMode(mode);
@@ -35,14 +35,15 @@ export default function ProjectListContainer({ projects, user }) {
         label: "Eliminar",
         onClick: async () => {
           try {
+            setIsLoading(true);
             await deleteProjectById(projectId);
-            const updatedProjects = await getProjectsByRole(user);
-            // setProjectList(updatedProjects);
-
+            route.refresh();
             toast.success("Proyecto eliminado correctamente");
           } catch (error) {
             toast.error("Error al eliminar el proyecto");
             console.error(error);
+          } finally {
+            setIsLoading(false);
           }
         },
       },
@@ -52,7 +53,10 @@ export default function ProjectListContainer({ projects, user }) {
   return (
     <>
       <div className="flex items-center justify-between mb-8">
-        <h1 className="text-2xl font-bold">Proyectos</h1>
+        <h1 className="text-3xl font-semibold tracking-tight font-playfair">
+          Proyectos
+        </h1>
+
         {(user.role === "client" || user.role === "pm") && (
           <Button onClick={() => handleOpenModal("create")}>
             Nuevo Proyecto
