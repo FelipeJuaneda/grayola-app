@@ -1,36 +1,124 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Grayola App
 
-## Getting Started
+Aplicación web construida como prueba técnica para Grayola, enfocada en la gestión de proyectos de diseño.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🚀 Tecnologías Usadas
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **Next.js 15 (App Router)**
+- **Tailwind CSS** + **ShadCN UI**
+- **Supabase** (auth + storage + PostgreSQL)
+- **React Hook Form** + **Zod**
+- **Sonner** para notificaciones
+- **Particles.js** para fondo animado visual
+- **next-themes** para soporte dark/light
+- **Framer Motion** para animaciones suaves y modernas
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 📅 Instrucciones para Ejecutar Localmente
 
-## Learn More
+1. **Clonar el repositorio:**
+   ```bash
+   git clone https://github.com/tuusuario/grayola-app.git
+   cd grayola-app
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+2. **Instalar dependencias:**
+   ```bash
+   npm install
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+3. **Configurar variables de entorno:**
+   Crear un archivo `.env.local` con las siguientes claves:
+   ```env
+   NEXT_PUBLIC_SUPABASE_URL=https://lrqlgautljwfrgjkezcm.supabase.co
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxycWxnYXV0bGp3ZnJnamtlemNtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQxNTUyODgsImV4cCI6MjA1OTczMTI4OH0.RUo3QiAb2mIw_Wy2kZz1VcMtsN5lNsWf-THBKZ2_-ic
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+4. **Levantar el servidor de desarrollo:**
+   ```bash
+   npm run dev
+   ```
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 👤 Usuarios de prueba (según rol)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Puedes iniciar sesión con los siguientes usuarios ya cargados en la base de datos para probar los diferentes roles y permisos:
+
+- **Product Manager**
+  - Email: `pm@gmail.com`
+  - Contraseña: `123456`
+
+- **Clientes**
+  - Cliente 1: `cliente1@gmail.com` · Contraseña: `123456`
+  - Cliente 2: `cliente2@gmail.com` · Contraseña: `123456`
+
+- **Diseñadores**
+  - Diseñador 1: `designer@gmail.com` · Contraseña: `123456`
+  - Diseñador 2: `designer2@gmail.com` · Contraseña: `123456`
+  - Diseñador 3: `designer3@gmail.com` · Contraseña: `123456`
+
+---
+
+## 📊 Descripción Técnica de la Solución
+
+### 1. 🔐 Autenticación y Roles
+
+- Integración con **Supabase Auth**.
+- Sistema de roles: cliente, project_manager (pm), designer, almacenado en la tabla `profiles`.
+- Uso de **políticas RLS personalizadas (Policies)** para proteger accesos a proyectos según el rol.
+- Middleware en Next.js para redireccionar si el usuario no está logueado.
+
+### 2. ⚒️ Gestor de Proyectos (CRUD)
+
+- Cada proyecto incluye:
+  - Título
+  - Descripción
+  - Archivos subidos (usando `supabase.storage` con URLs firmadas y buckets privados).
+- Soporte para **crear, editar, eliminar** proyectos según rol.
+- Cliente puede crear proyectos y ver los propios · PM puede ver todos, asignar, editar y eliminar · Diseñador puede ver los asignados sin editar ni borrar.
+
+### 3. 🌟 Interfaz de Usuario
+
+- UI moderna, responsiva y minimalista usando **Tailwind CSS** + **ShadCN UI**.
+- Formularios profesionales con validaciones de campos requeridos y tipos usando **Zod**.
+- Integración de **React Hook Form** para gestionar formularios.
+- **Framer Motion** para animaciones suaves, especialmente en transiciones y modales.
+
+### 4. 🏡 Arquitectura del Proyecto
+
+- Separación clara de responsabilidades:
+  - `helpers/` para funciones reutilizables de Supabase (client/server).
+  - `components/ui/` para elementos de interfaz reutilizables.
+  - `schemas/` para validaciones con Zod.
+  - `lib/` para configuración de Supabase.
+- Soporte completo para **modo oscuro y claro**.
+- Fondo animado con `Particles.js`, adaptado según tema.
+
+### 5. 🚸 Seguridad
+
+- Validaciones con Zod en todos los formularios.
+- Autorización basada en roles desde Supabase.
+- Protección de rutas y acciones según tipo de usuario.
+
+---
+
+## 🚧 Extras y Bonus
+
+- ✅ Aplicación desplegada en **Vercel** para facilitar la demo: [grayola-app.vercel.app](https://grayola-app.vercel.app)
+- ✅ Uso completo de **ShadCN UI** para consistencia visual.
+- ✅ Animaciones y detalles visuales cuidados (particles, fuentes tipográficas, layout adaptable).
+- ✅ Se documentó todo
+
+---
+
+## 😊 Autor
+
+Construido por Felipe como parte del proceso de selección de Grayola.
+
+> ¡Gracias por leer! Esta app fue construida con pasión, foco en la experiencia de usuario y escalabilidad. ❤️
+
+
