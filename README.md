@@ -33,8 +33,8 @@ Aplicación web construida como prueba técnica para Grayola, enfocada en la ges
 3. **Configurar variables de entorno:**
    Crear un archivo `.env.local` con las siguientes claves:
    ```env
-   NEXT_PUBLIC_SUPABASE_URL=https://lrqlgautljwfrgjkezcm.supabase.co
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxycWxnYXV0bGp3ZnJnamtlemNtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQxNTUyODgsImV4cCI6MjA1OTczMTI4OH0.RUo3QiAb2mIw_Wy2kZz1VcMtsN5lNsWf-THBKZ2_-ic
+   NEXT_PUBLIC_SUPABASE_URL= Clavesecreta
+   NEXT_PUBLIC_SUPABASE_ANON_KEY= Clavesecreta
    ```
 
 4. **Levantar el servidor de desarrollo:**
