@@ -29,7 +29,7 @@ export function storageSafeName(name: string) {
   const dot = name.lastIndexOf(".")
   const base = (dot > 0 ? name.slice(0, dot) : name)
     .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "") // quita tildes tras normalizar
+    .replace(/\p{Diacritic}/gu, "") // quita tildes tras normalizar
     .replace(/[^a-zA-Z0-9-_]+/g, "-")
     .replace(/^-+|-+$/g, "")
     .slice(0, 60)
