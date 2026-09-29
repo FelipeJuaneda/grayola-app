@@ -14,8 +14,7 @@ export function Toaster() {
       closeButton
       toastOptions={{
         classNames: {
-          toast:
-            "!rounded-md !border !border-rule !bg-surface !text-ink !shadow-overlay !font-sans !text-small",
+          toast: "!rounded-md !border !border-rule !bg-surface !text-ink !shadow-overlay !font-sans !text-small",
           description: "!text-ink-2",
           success: "!border-t-2 !border-t-signal-done",
           error: "!border-t-2 !border-t-danger",

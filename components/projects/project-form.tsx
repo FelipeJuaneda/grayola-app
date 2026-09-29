@@ -93,7 +93,13 @@ export function ProjectForm({ mode, role, designers, defaultValues, projectId }:
 
   const busy = phase !== "idle"
   const submitLabel =
-    phase === "saving" ? "Guardando…" : phase === "uploading" ? "Subiendo archivos…" : mode === "create" ? "Crear proyecto" : "Guardar cambios"
+    phase === "saving"
+      ? "Guardando…"
+      : phase === "uploading"
+        ? "Subiendo archivos…"
+        : mode === "create"
+          ? "Crear proyecto"
+          : "Guardar cambios"
 
   return (
     <form onSubmit={onSubmit} noValidate className="grid gap-8">

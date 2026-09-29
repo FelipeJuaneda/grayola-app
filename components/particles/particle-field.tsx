@@ -98,9 +98,7 @@ export default function ParticleField({ intensity = "ambient", className }: Part
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)")
     const compact = window.matchMedia("(max-width: 767px)")
     const build = () =>
-      setOptions(
-        buildOptions(intensity, readTokens(), { reducedMotion: reduced.matches, compact: compact.matches }),
-      )
+      setOptions(buildOptions(intensity, readTokens(), { reducedMotion: reduced.matches, compact: compact.matches }))
 
     build()
     reduced.addEventListener("change", build)

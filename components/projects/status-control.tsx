@@ -52,7 +52,7 @@ export function StatusControl({
     <DropdownMenu>
       <DropdownMenuTrigger
         className={cn(
-          "inline-flex min-h-9 items-center gap-2 rounded-sm border border-transparent px-2 -mx-2",
+          "-mx-2 inline-flex min-h-9 items-center gap-2 rounded-sm border border-transparent px-2",
           "hover:border-rule data-[state=open]:border-rule-strong",
           pending && "opacity-70",
           className,

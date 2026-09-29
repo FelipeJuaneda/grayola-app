@@ -15,9 +15,7 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ["lucide-react", "date-fns"],
   },
   images: {
-    remotePatterns: [
-      { protocol: "https", hostname: "*.supabase.co", pathname: "/storage/v1/object/sign/**" },
-    ],
+    remotePatterns: [{ protocol: "https", hostname: "*.supabase.co", pathname: "/storage/v1/object/sign/**" }],
   },
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }]

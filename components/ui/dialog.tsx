@@ -23,11 +23,7 @@ export const Dialog = DialogPrimitive.Root
 export const DialogTrigger = DialogPrimitive.Trigger
 export const DialogClose = DialogPrimitive.Close
 
-export function DialogContent({
-  className,
-  children,
-  ...props
-}: ComponentProps<typeof DialogPrimitive.Content>) {
+export function DialogContent({ className, children, ...props }: ComponentProps<typeof DialogPrimitive.Content>) {
   return (
     <DialogPrimitive.Portal>
       <DialogPrimitive.Overlay className={overlayClass} />
@@ -49,22 +45,14 @@ export function DialogHeader({ className, ...props }: ComponentProps<"div">) {
 }
 
 export function DialogFooter({ className, ...props }: ComponentProps<"div">) {
-  return (
-    <div
-      className={cn("mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end", className)}
-      {...props}
-    />
-  )
+  return <div className={cn("mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end", className)} {...props} />
 }
 
 export function DialogTitle({ className, ...props }: ComponentProps<typeof DialogPrimitive.Title>) {
   return <DialogPrimitive.Title className={cn("text-h3 font-bold", className)} {...props} />
 }
 
-export function DialogDescription({
-  className,
-  ...props
-}: ComponentProps<typeof DialogPrimitive.Description>) {
+export function DialogDescription({ className, ...props }: ComponentProps<typeof DialogPrimitive.Description>) {
   return <DialogPrimitive.Description className={cn("text-body text-ink-2", className)} {...props} />
 }
 
@@ -85,10 +73,7 @@ export function AlertDialogTitle({ className, ...props }: ComponentProps<typeof 
   return <AlertPrimitive.Title className={cn("text-h3 font-bold", className)} {...props} />
 }
 
-export function AlertDialogDescription({
-  className,
-  ...props
-}: ComponentProps<typeof AlertPrimitive.Description>) {
+export function AlertDialogDescription({ className, ...props }: ComponentProps<typeof AlertPrimitive.Description>) {
   return <AlertPrimitive.Description className={cn("mt-2 text-body text-ink-2", className)} {...props} />
 }
 

@@ -7,8 +7,7 @@ import { AuthorizationError } from "@/lib/auth/session"
 // Resultado uniforme de las Server Actions: nunca se lanzan errores crudos
 // al cliente; los formularios reciben mensajes en español por campo.
 export type ActionResult<T = void> =
-  | { ok: true; data: T }
-  | { ok: false; error: string; fieldErrors?: Record<string, string[]> }
+  { ok: true; data: T } | { ok: false; error: string; fieldErrors?: Record<string, string[]> }
 
 export function ok<T>(data: T): ActionResult<T> {
   return { ok: true, data }
@@ -30,9 +29,7 @@ export function describeDbError(error: PostgrestLikeError): string {
   if (!error) return "Ocurrió un error inesperado. Probá de nuevo."
   switch (error.code) {
     case "42501":
-      return error.message?.startsWith("Los diseñadores")
-        ? error.message
-        : "No tenés permiso para hacer esto."
+      return error.message?.startsWith("Los diseñadores") ? error.message : "No tenés permiso para hacer esto."
     case "23505":
       return "Ya existe un registro igual."
     case "23514":

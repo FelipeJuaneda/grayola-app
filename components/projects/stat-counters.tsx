@@ -26,7 +26,13 @@ export function countProjects(projects: ProjectListItem[]) {
 
 // Contadores de cartel: numerales grandes sobre la grilla. En cero quedan
 // "apagados" (la ausencia también se diseña). Cada uno filtra la lista.
-export function StatCounters({ projects, activeStatus }: { projects: ProjectListItem[]; activeStatus?: ProjectStatus }) {
+export function StatCounters({
+  projects,
+  activeStatus,
+}: {
+  projects: ProjectListItem[]
+  activeStatus?: ProjectStatus
+}) {
   const { counts, overdue } = countProjects(projects)
 
   const items = [
@@ -60,7 +66,7 @@ export function StatCounters({ projects, activeStatus }: { projects: ProjectList
             >
               <span
                 className={cn(
-                  "numeral block text-display tabular sm:text-numeral",
+                  "numeral tabular block text-display sm:text-numeral",
                   item.value === 0 ? "text-ink-3" : "text-ink",
                 )}
               >

@@ -22,7 +22,7 @@ export function PopoverContent({
         sideOffset={sideOffset}
         className={cn(
           "z-[var(--z-dropdown)] w-72 rounded-md border border-rule bg-surface p-2 shadow-overlay outline-none",
-          "data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 motion-reduce:animate-none",
+          "data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0 motion-reduce:animate-none",
           className,
         )}
         {...props}

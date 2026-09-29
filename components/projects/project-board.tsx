@@ -14,7 +14,7 @@ import { StatusControl } from "./status-control"
 export function ProjectBoard({ projects }: { projects: ProjectListItem[] }) {
   return (
     <div className="-mx-4 overflow-x-auto px-4 pb-2 md:mx-0 md:px-0">
-      <div className="grid min-w-[56rem] grid-cols-4 gap-0 border-t-2 border-rule-strong snap-x snap-mandatory md:min-w-0">
+      <div className="grid min-w-[56rem] snap-x snap-mandatory grid-cols-4 gap-0 border-t-2 border-rule-strong md:min-w-0">
         {PROJECT_STATUSES.map((status) => {
           const column = projects.filter((p) => p.status === status)
           return (
@@ -43,7 +43,7 @@ export function ProjectBoard({ projects }: { projects: ProjectListItem[] }) {
                       <li key={project.id} className="grid gap-2 border-b border-rule py-4">
                         <Link
                           href={`/proyectos/${project.id}`}
-                          className="font-bold leading-snug underline-offset-4 decoration-2 hover:underline"
+                          className="leading-snug font-bold decoration-2 underline-offset-4 hover:underline"
                         >
                           {project.title}
                         </Link>
@@ -56,7 +56,7 @@ export function ProjectBoard({ projects }: { projects: ProjectListItem[] }) {
                           )}
                           <span
                             className={cn(
-                              "text-caption tabular",
+                              "tabular text-caption",
                               due === "overdue" ? "font-semibold text-danger" : "text-ink-2",
                             )}
                           >

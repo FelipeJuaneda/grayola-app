@@ -45,11 +45,11 @@
   --paper: #0f0f0e;
   --surface: #191917;
   --subtle: #232321;
-  --ink: #ededE8;
+  --ink: #edede8;
   --ink-2: #a2a29a;
   --ink-3: #6b6b64;
   --rule: #2e2e2b;
-  --rule-strong: #ededE8;
+  --rule-strong: #edede8;
   --grid-rule: rgb(237 237 232 / 0.05);
 
   --signal-pending: #a2a29a;
@@ -170,7 +170,7 @@
   }
 
   body {
-    @apply bg-paper text-ink font-sans text-body antialiased;
+    @apply bg-paper font-sans text-body text-ink antialiased;
     transition:
       background-color var(--duration-base) var(--ease-out-swiss),
       color var(--duration-base) var(--ease-out-swiss);

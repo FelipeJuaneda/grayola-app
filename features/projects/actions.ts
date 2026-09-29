@@ -2,24 +2,12 @@
 
 import { revalidatePath } from "next/cache"
 
-import {
-  type ActionResult,
-  describeDbError,
-  fail,
-  fromZodError,
-  handleActionError,
-  ok,
-} from "@/lib/actions"
+import { type ActionResult, describeDbError, fail, fromZodError, handleActionError, ok } from "@/lib/actions"
 import { requireRole } from "@/lib/auth/session"
 import { createClient } from "@/lib/supabase/server"
 
 import type { ProjectStatus } from "./constants"
-import {
-  type ProjectFormValues,
-  projectFormSchema,
-  projectIdSchema,
-  projectStatusSchema,
-} from "./schemas"
+import { type ProjectFormValues, projectFormSchema, projectIdSchema, projectStatusSchema } from "./schemas"
 
 type Supabase = Awaited<ReturnType<typeof createClient>>
 
@@ -165,18 +153,11 @@ export async function deleteProject(id: string): Promise<ActionResult> {
     // Primero los objetos de Storage (la fila de metadatos cae en cascada).
     const { data: files } = await supabase.from("project_files").select("path").eq("project_id", parsedId.data)
     if (files && files.length > 0) {
-      const { error: storageError } = await supabase.storage
-        .from("project-files")
-        .remove(files.map((f) => f.path))
+      const { error: storageError } = await supabase.storage.from("project-files").remove(files.map((f) => f.path))
       if (storageError) return fail("No pudimos borrar los archivos del proyecto. Probá de nuevo.")
     }
 
-    const { data, error } = await supabase
-      .from("projects")
-      .delete()
-      .eq("id", parsedId.data)
-      .select("id")
-      .maybeSingle()
+    const { data, error } = await supabase.from("projects").delete().eq("id", parsedId.data).select("id").maybeSingle()
 
     if (error) return fail(describeDbError(error))
     if (!data) return fail("No encontramos el proyecto o no tenés permiso para borrarlo.")

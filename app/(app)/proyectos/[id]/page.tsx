@@ -47,7 +47,10 @@ export default async function ProjectPage({ params }: Params) {
 
   return (
     <article className="container-swiss grid gap-10 pt-8">
-      <Link href="/proyectos" className="inline-flex w-fit items-center gap-2 text-small font-semibold text-ink-2 hover:text-ink">
+      <Link
+        href="/proyectos"
+        className="inline-flex w-fit items-center gap-2 text-small font-semibold text-ink-2 hover:text-ink"
+      >
         <ArrowLeft aria-hidden="true" className="size-4" />
         Proyectos
       </Link>

@@ -65,7 +65,13 @@ function FileRow({ file, canDelete }: { file: ProjectFile; canDelete: boolean })
           {formatFileSize(file.size)} · {file.uploadedBy?.name ?? "Alguien"} · {formatRelative(file.createdAt)}
         </span>
       </div>
-      <Button variant="secondary" size="sm" onClick={download} disabled={downloading} aria-label={`Descargar ${file.name}`}>
+      <Button
+        variant="secondary"
+        size="sm"
+        onClick={download}
+        disabled={downloading}
+        aria-label={`Descargar ${file.name}`}
+      >
         <Download aria-hidden="true" />
         <span className="hidden sm:inline">{downloading ? "Preparando…" : "Descargar"}</span>
       </Button>
@@ -78,7 +84,9 @@ function FileRow({ file, canDelete }: { file: ProjectFile; canDelete: boolean })
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogTitle>¿Eliminar “{file.name}”?</AlertDialogTitle>
-            <AlertDialogDescription>El archivo se borra del almacenamiento y no se puede recuperar.</AlertDialogDescription>
+            <AlertDialogDescription>
+              El archivo se borra del almacenamiento y no se puede recuperar.
+            </AlertDialogDescription>
             <div className="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
               <AlertDialogCancel className={buttonVariants({ variant: "ghost" })}>Cancelar</AlertDialogCancel>
               <AlertDialogAction className={buttonVariants({ variant: "danger" })} onClick={remove}>
@@ -140,7 +148,9 @@ export function FileManager({
     <div className="grid gap-5">
       {files.length === 0 ? (
         <p className="border-y border-dashed border-rule py-6 text-small text-ink-2">
-          {canUpload ? "Todavía no hay archivos. Sumá referencias o piezas abajo." : "Todavía no hay archivos en este proyecto."}
+          {canUpload
+            ? "Todavía no hay archivos. Sumá referencias o piezas abajo."
+            : "Todavía no hay archivos en este proyecto."}
         </p>
       ) : (
         <ul className="border-t border-rule" aria-label="Archivos del proyecto">

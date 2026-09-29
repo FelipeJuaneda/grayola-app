@@ -27,16 +27,20 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
             Clientes, project managers y diseñadores comparten cada proyecto: quién lo tiene, en qué etapa está y qué
             vence primero.
           </p>
-          <ol className="hidden items-center gap-3 text-small font-semibold md:flex" aria-label="Recorrido de un proyecto">
+          <ol
+            className="hidden items-center gap-3 text-small font-semibold md:flex"
+            aria-label="Recorrido de un proyecto"
+          >
             {ROUTE.map((step, index) => (
               <li key={step} className="flex items-center gap-3">
                 <span className="inline-flex items-center gap-2">
-                  <span aria-hidden="true" className={index === 1 ? "size-2.5 bg-signal-progress" : "size-2.5 bg-ink"} />
+                  <span
+                    aria-hidden="true"
+                    className={index === 1 ? "size-2.5 bg-signal-progress" : "size-2.5 bg-ink"}
+                  />
                   {step}
                 </span>
-                {index < ROUTE.length - 1 ? (
-                  <span aria-hidden="true" className="h-px w-10 bg-rule-strong" />
-                ) : null}
+                {index < ROUTE.length - 1 ? <span aria-hidden="true" className="h-px w-10 bg-rule-strong" /> : null}
               </li>
             ))}
           </ol>

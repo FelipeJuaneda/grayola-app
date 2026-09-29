@@ -19,7 +19,10 @@ export default async function NewProjectPage() {
 
   return (
     <div className="container-swiss grid max-w-5xl gap-8 pt-8">
-      <Link href="/proyectos" className="inline-flex w-fit items-center gap-2 text-small font-semibold text-ink-2 hover:text-ink">
+      <Link
+        href="/proyectos"
+        className="inline-flex w-fit items-center gap-2 text-small font-semibold text-ink-2 hover:text-ink"
+      >
         <ArrowLeft aria-hidden="true" className="size-4" />
         Proyectos
       </Link>

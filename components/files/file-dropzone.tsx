@@ -4,12 +4,7 @@ import { FileArchive, FileText, ImageIcon, Upload, X } from "lucide-react"
 import { useEffect, useId, useRef, useState } from "react"
 
 import { Button } from "@/components/ui/button"
-import {
-  ACCEPT_ATTRIBUTE,
-  ACCEPTED_FILE_TYPES,
-  MAX_FILES_PER_BATCH,
-  validateFile,
-} from "@/features/files/constants"
+import { ACCEPT_ATTRIBUTE, ACCEPTED_FILE_TYPES, MAX_FILES_PER_BATCH, validateFile } from "@/features/files/constants"
 import { formatFileSize } from "@/lib/format"
 import { cn } from "@/lib/utils"
 

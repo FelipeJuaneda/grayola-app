@@ -29,10 +29,16 @@ export function storageSafeName(name: string) {
   const dot = name.lastIndexOf(".")
   const base = (dot > 0 ? name.slice(0, dot) : name)
     .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")
+    .replace(/[̀-ͯ]/g, "") // quita tildes tras normalizar
     .replace(/[^a-zA-Z0-9-_]+/g, "-")
     .replace(/^-+|-+$/g, "")
     .slice(0, 60)
-  const ext = dot > 0 ? name.slice(dot + 1).toLowerCase().replace(/[^a-z0-9]/g, "") : ""
+  const ext =
+    dot > 0
+      ? name
+          .slice(dot + 1)
+          .toLowerCase()
+          .replace(/[^a-z0-9]/g, "")
+      : ""
   return `${base || "archivo"}${ext ? `.${ext}` : ""}`
 }

@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils"
 // md = 44px (objetivo táctil); sm = 36px con área de toque extendida a 44px.
 export const buttonVariants = cva(
   [
-    "relative inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-sm",
+    "relative inline-flex shrink-0 items-center justify-center gap-2 rounded-sm whitespace-nowrap",
     "font-semibold tracking-[0.01em] select-none",
     "transition-[background-color,color,border-color,translate] duration-[var(--duration-fast)] ease-[var(--ease-out-swiss)]",
     "active:translate-y-px motion-reduce:active:translate-y-0",
@@ -35,8 +35,7 @@ export const buttonVariants = cva(
   },
 )
 
-export type ButtonProps = ComponentProps<"button"> &
-  VariantProps<typeof buttonVariants> & { asChild?: boolean }
+export type ButtonProps = ComponentProps<"button"> & VariantProps<typeof buttonVariants> & { asChild?: boolean }
 
 export function Button({ className, variant, size, asChild = false, type, ...props }: ButtonProps) {
   const Comp = asChild ? Slot.Root : "button"

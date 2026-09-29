@@ -22,7 +22,7 @@ export function DropdownMenuContent({
         sideOffset={sideOffset}
         className={cn(
           "z-[var(--z-dropdown)] min-w-52 overflow-hidden rounded-md border border-rule bg-surface p-1 shadow-overlay",
-          "data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 motion-reduce:animate-none",
+          "data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0 motion-reduce:animate-none",
           className,
         )}
         {...props}
@@ -39,12 +39,7 @@ export function DropdownMenuItem({
   variant = "default",
   ...props
 }: ComponentProps<typeof MenuPrimitive.Item> & { variant?: "default" | "danger" }) {
-  return (
-    <MenuPrimitive.Item
-      className={cn(itemClass, variant === "danger" && "text-danger", className)}
-      {...props}
-    />
-  )
+  return <MenuPrimitive.Item className={cn(itemClass, variant === "danger" && "text-danger", className)} {...props} />
 }
 
 export function DropdownMenuRadioItem({

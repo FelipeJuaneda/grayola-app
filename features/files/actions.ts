@@ -102,16 +102,10 @@ export async function getFileDownloadUrl(fileId: string): Promise<ActionResult<{
     if (!parsed.success) return fail("Archivo inválido.")
 
     const supabase = await createClient()
-    const { data: file } = await supabase
-      .from("project_files")
-      .select("path, name")
-      .eq("id", parsed.data)
-      .maybeSingle()
+    const { data: file } = await supabase.from("project_files").select("path, name").eq("id", parsed.data).maybeSingle()
     if (!file) return fail("No encontramos el archivo o no tenés acceso.")
 
-    const { data, error } = await supabase.storage
-      .from(BUCKET)
-      .createSignedUrl(file.path, 60, { download: file.name })
+    const { data, error } = await supabase.storage.from(BUCKET).createSignedUrl(file.path, 60, { download: file.name })
     if (error || !data) return fail("No pudimos generar el enlace de descarga.")
     return ok({ url: data.signedUrl })
   } catch (error) {

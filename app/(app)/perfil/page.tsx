@@ -17,11 +17,7 @@ const PERMISSIONS: Record<Role, string[]> = {
     "Cambiar el estado de tus proyectos",
     "Descargar los archivos del cliente",
   ],
-  pm: [
-    "Ver todos los proyectos del estudio",
-    "Crear, editar, asignar y eliminar",
-    "Gestionar archivos y estados",
-  ],
+  pm: ["Ver todos los proyectos del estudio", "Crear, editar, asignar y eliminar", "Gestionar archivos y estados"],
 }
 
 export default async function ProfilePage() {

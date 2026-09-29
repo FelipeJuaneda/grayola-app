@@ -85,64 +85,64 @@ export function ProjectFilters({
         </Button>
 
         <div id="filtros-extra" className={cn(showMore ? "grid" : "hidden", "gap-3 sm:contents")}>
-        <label className="grid gap-1.5">
-          <span className="kicker">Estado</span>
-          <select
-            className={selectClass}
-            value={params.get("status") ?? ""}
-            onChange={(event) => update({ status: event.target.value || null })}
-          >
-            <option value="">Todos</option>
-            {PROJECT_STATUSES.map((status) => (
-              <option key={status} value={status}>
-                {STATUS_META[status].label}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        {showDesigner ? (
           <label className="grid gap-1.5">
-            <span className="kicker">Diseño</span>
+            <span className="kicker">Estado</span>
             <select
               className={selectClass}
-              value={params.get("designer") ?? ""}
-              onChange={(event) => update({ designer: event.target.value || null })}
+              value={params.get("status") ?? ""}
+              onChange={(event) => update({ status: event.target.value || null })}
             >
-              <option value="">Todo el equipo</option>
-              {designers.map((designer) => (
-                <option key={designer.id} value={designer.id}>
-                  {designer.name}
+              <option value="">Todos</option>
+              {PROJECT_STATUSES.map((status) => (
+                <option key={status} value={status}>
+                  {STATUS_META[status].label}
                 </option>
               ))}
             </select>
           </label>
-        ) : null}
 
-        <label className="grid gap-1.5">
-          <span className="kicker">Orden</span>
-          <select
-            className={selectClass}
-            value={params.get("sort") ?? defaultSort}
-            onChange={(event) => update({ sort: event.target.value === defaultSort ? null : event.target.value })}
-          >
-            <option value="recent">Más recientes</option>
-            <option value="due">Próximos a vencer</option>
-          </select>
-        </label>
+          {showDesigner ? (
+            <label className="grid gap-1.5">
+              <span className="kicker">Diseño</span>
+              <select
+                className={selectClass}
+                value={params.get("designer") ?? ""}
+                onChange={(event) => update({ designer: event.target.value || null })}
+              >
+                <option value="">Todo el equipo</option>
+                {designers.map((designer) => (
+                  <option key={designer.id} value={designer.id}>
+                    {designer.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+          ) : null}
 
-        {hasFilters ? (
-          <Button
-            variant="ghost"
-            onClick={() => {
-              setQuery("")
-              update({ q: null, status: null, designer: null, sort: null })
-            }}
-          >
-            <X aria-hidden="true" />
-            Limpiar filtros
-          </Button>
-        ) : null}
+          <label className="grid gap-1.5">
+            <span className="kicker">Orden</span>
+            <select
+              className={selectClass}
+              value={params.get("sort") ?? defaultSort}
+              onChange={(event) => update({ sort: event.target.value === defaultSort ? null : event.target.value })}
+            >
+              <option value="recent">Más recientes</option>
+              <option value="due">Próximos a vencer</option>
+            </select>
+          </label>
+
+          {hasFilters ? (
+            <Button
+              variant="ghost"
+              onClick={() => {
+                setQuery("")
+                update({ q: null, status: null, designer: null, sort: null })
+              }}
+            >
+              <X aria-hidden="true" />
+              Limpiar filtros
+            </Button>
+          ) : null}
         </div>
       </div>
 

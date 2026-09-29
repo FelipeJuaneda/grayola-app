@@ -48,7 +48,10 @@ function FormError({ message }: { message: string | null }) {
 
 export function SignInForm() {
   const [serverError, setServerError] = useState<string | null>(null)
-  const form = useForm<SignInValues>({ resolver: zodResolver(signInSchema), defaultValues: { email: "", password: "" } })
+  const form = useForm<SignInValues>({
+    resolver: zodResolver(signInSchema),
+    defaultValues: { email: "", password: "" },
+  })
   const { register, handleSubmit, formState } = form
 
   const onSubmit = handleSubmit(async (values) => {
@@ -62,7 +65,9 @@ export function SignInForm() {
     <form onSubmit={onSubmit} noValidate className="grid gap-5">
       <FormError message={serverError} />
       <Field id="email" label="Correo" error={formState.errors.email?.message}>
-        {(aria) => <Input {...aria} type="email" autoComplete="email" placeholder="nombre@estudio.com" {...register("email")} />}
+        {(aria) => (
+          <Input {...aria} type="email" autoComplete="email" placeholder="nombre@estudio.com" {...register("email")} />
+        )}
       </Field>
       <Field id="password" label="Contraseña" error={formState.errors.password?.message}>
         {(aria) => <PasswordInput {...aria} autoComplete="current-password" {...register("password")} />}
@@ -115,7 +120,9 @@ export function SignUpForm() {
         {(aria) => <Input {...aria} autoComplete="name" placeholder="Lucía Fernández" {...register("fullName")} />}
       </Field>
       <Field id="email" label="Correo" error={formState.errors.email?.message}>
-        {(aria) => <Input {...aria} type="email" autoComplete="email" placeholder="nombre@estudio.com" {...register("email")} />}
+        {(aria) => (
+          <Input {...aria} type="email" autoComplete="email" placeholder="nombre@estudio.com" {...register("email")} />
+        )}
       </Field>
       <Field id="password" label="Contraseña" hint="Al menos 6 caracteres." error={formState.errors.password?.message}>
         {(aria) => <PasswordInput {...aria} autoComplete="new-password" {...register("password")} />}
@@ -176,7 +183,10 @@ export function DemoAccess() {
                 <span className="text-small font-bold">{option.label}</span>
                 <span className="text-caption text-ink-2">{option.description}</span>
               </span>
-              <span aria-hidden="true" className="px-2 text-ink-2 transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none">
+              <span
+                aria-hidden="true"
+                className="px-2 text-ink-2 transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none"
+              >
                 {pendingRole === option.role ? "…" : "→"}
               </span>
             </button>

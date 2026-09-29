@@ -17,7 +17,15 @@ import {
 } from "@/components/ui/dialog"
 import { deleteProject } from "@/features/projects/actions"
 
-export function DeleteProjectButton({ projectId, title, fileCount }: { projectId: string; title: string; fileCount: number }) {
+export function DeleteProjectButton({
+  projectId,
+  title,
+  fileCount,
+}: {
+  projectId: string
+  title: string
+  fileCount: number
+}) {
   const router = useRouter()
   const [open, setOpen] = useState(false)
   const [pending, startTransition] = useTransition()

@@ -29,13 +29,18 @@ export function ProjectTable({ projects, role }: { projects: ProjectListItem[]; 
         role="row"
         className="hidden grid-cols-[3rem_minmax(0,2.4fr)_minmax(0,1.1fr)_minmax(0,1fr)_minmax(0,0.9fr)_minmax(0,0.9fr)] gap-4 border-b border-rule py-2.5 lg:grid"
       >
-        {["N.º", "Proyecto", "Estado", showClient ? "Cliente" : "Equipo", showClient ? "Equipo" : "Archivos", "Entrega"].map(
-          (label) => (
-            <span key={label} role="columnheader" className="kicker">
-              {label}
-            </span>
-          ),
-        )}
+        {[
+          "N.º",
+          "Proyecto",
+          "Estado",
+          showClient ? "Cliente" : "Equipo",
+          showClient ? "Equipo" : "Archivos",
+          "Entrega",
+        ].map((label) => (
+          <span key={label} role="columnheader" className="kicker">
+            {label}
+          </span>
+        ))}
       </div>
 
       <div role="rowgroup">
@@ -60,7 +65,7 @@ export function ProjectTable({ projects, role }: { projects: ProjectListItem[]; 
               <div role="cell" className="min-w-0">
                 <Link
                   href={`/proyectos/${project.id}`}
-                  className="text-lead font-bold leading-snug text-ink underline-offset-4 decoration-2 hover:underline"
+                  className="text-lead leading-snug font-bold text-ink decoration-2 underline-offset-4 hover:underline"
                 >
                   {project.title}
                 </Link>
@@ -112,7 +117,7 @@ export function ProjectTable({ projects, role }: { projects: ProjectListItem[]; 
                 )}
               </div>
 
-              <div role="cell" className={cn("text-small tabular", dueTone[due])}>
+              <div role="cell" className={cn("tabular text-small", dueTone[due])}>
                 <span className="text-ink-2 lg:sr-only">Entrega: </span>
                 {describeDue(project.dueDate, project.status === "delivered")}
               </div>

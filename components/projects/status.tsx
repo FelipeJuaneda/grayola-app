@@ -1,11 +1,6 @@
 import { Check } from "lucide-react"
 
-import {
-  PROJECT_STATUSES,
-  type ProjectStatus,
-  STATUS_META,
-  statusIndex,
-} from "@/features/projects/constants"
+import { PROJECT_STATUSES, type ProjectStatus, STATUS_META, statusIndex } from "@/features/projects/constants"
 import { cn } from "@/lib/utils"
 
 // Cada estado se reconoce por forma además de color: contorno (pendiente),
@@ -82,7 +77,11 @@ export function StatusSteps({ status }: { status: ProjectStatus }) {
             className={cn("grid gap-2 border-t-4 pt-2", reached ? "border-rule-strong" : "border-rule")}
           >
             <span className={cn("flex items-center gap-2 text-small font-semibold", !reached && "text-ink-2")}>
-              {reached ? <StatusMarker status={step} /> : <span aria-hidden="true" className="size-3 border border-dashed border-ink-3" />}
+              {reached ? (
+                <StatusMarker status={step} />
+              ) : (
+                <span aria-hidden="true" className="size-3 border border-dashed border-ink-3" />
+              )}
               {STATUS_META[step].label}
             </span>
             <span className="text-caption text-ink-2">{STATUS_META[step].hint}</span>

@@ -22,7 +22,10 @@ export default function Loading() {
         </div>
         <div className="grid border-t-2 border-rule-strong">
           {Array.from({ length: 6 }, (_, i) => (
-            <div key={i} className="grid grid-cols-[3rem_minmax(0,1fr)] gap-4 border-b border-rule py-5 md:grid-cols-[3rem_2.4fr_1.1fr_1fr_0.9fr_0.9fr]">
+            <div
+              key={i}
+              className="grid grid-cols-[3rem_minmax(0,1fr)] gap-4 border-b border-rule py-5 md:grid-cols-[3rem_2.4fr_1.1fr_1fr_0.9fr_0.9fr]"
+            >
               <Skeleton className="h-5 w-7" />
               <div className="grid gap-2">
                 <Skeleton className="h-5 w-3/4" />

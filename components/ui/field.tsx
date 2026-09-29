@@ -28,11 +28,7 @@ export function Textarea({ className, ...props }: ComponentProps<"textarea">) {
 
 export function Label({ className, ...props }: ComponentProps<typeof LabelPrimitive.Root>) {
   return (
-    <LabelPrimitive.Root
-      data-slot="label"
-      className={cn("text-small font-semibold text-ink", className)}
-      {...props}
-    />
+    <LabelPrimitive.Root data-slot="label" className={cn("text-small font-semibold text-ink", className)} {...props} />
   )
 }
 

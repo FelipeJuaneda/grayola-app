@@ -28,11 +28,7 @@ export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
   } = await supabase.auth.getUser()
   if (!user) return null
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("full_name, role")
-    .eq("id", user.id)
-    .single()
+  const { data: profile } = await supabase.from("profiles").select("full_name, role").eq("id", user.id).single()
 
   if (!profile || !isRole(profile.role)) return null
 
