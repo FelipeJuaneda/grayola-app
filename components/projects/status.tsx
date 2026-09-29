@@ -31,7 +31,7 @@ export function StatusMarker({ status, className }: { status: ProjectStatus; cla
 
 export function StatusLabel({ status, className }: { status: ProjectStatus; className?: string }) {
   return (
-    <span className={cn("inline-flex items-center gap-2 text-small font-medium text-ink", className)}>
+    <span className={cn("inline-flex items-center gap-2 text-small font-medium whitespace-nowrap text-ink", className)}>
       <StatusMarker status={status} />
       {STATUS_META[status].label}
     </span>

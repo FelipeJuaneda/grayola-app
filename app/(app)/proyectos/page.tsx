@@ -32,11 +32,16 @@ export default async function ProjectsPage({
   const view = isPm ? filters.view : "list"
   const hasFilters = Boolean(filters.q || filters.status || filters.designer)
 
-  const [all, filtered, designers] = await Promise.all([
+  const [all, fetched, designers] = await Promise.all([
     listProjects({}),
     listProjects({ ...filters, sort }),
     isPm ? listDesigners() : Promise.resolve([]),
   ])
+  // Ordenado por entrega, lo ya entregado baja al final: arriba queda lo urgente.
+  const filtered =
+    sort === "due"
+      ? [...fetched].sort((a, b) => Number(a.status === "delivered") - Number(b.status === "delivered"))
+      : fetched
 
   const copy = DASHBOARD_COPY[user.role]
   const name = firstName(user.fullName, user.email)
@@ -91,7 +96,12 @@ export default async function ProjectsPage({
                 Listado de proyectos
               </h2>
               <Suspense>
-                <ProjectFilters designers={designers} showDesigner={isPm} showView={isPm} />
+                <ProjectFilters
+                  designers={designers}
+                  showDesigner={isPm}
+                  showView={isPm}
+                  defaultSort={user.role === "designer" ? "due" : "recent"}
+                />
               </Suspense>
 
               <p className="text-small text-ink-2" aria-live="polite">

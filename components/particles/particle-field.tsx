@@ -43,7 +43,9 @@ function buildOptions(
   { reducedMotion, compact }: { reducedMotion: boolean; compact: boolean },
 ): ISourceOptions {
   const hero = intensity === "hero"
-  const count = hero ? (compact ? 22 : 58) : compact ? 8 : 26
+  // Con densidad activa, el valor escala con el área: la banda "ambient" es
+  // baja, así que necesita un valor base más alto para verse.
+  const count = hero ? (compact ? 22 : 58) : compact ? 30 : 64
 
   return {
     fullScreen: { enable: false },

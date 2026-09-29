@@ -27,7 +27,7 @@ export function ProjectTable({ projects, role }: { projects: ProjectListItem[]; 
     <div role="table" aria-label="Proyectos" className="border-t-2 border-rule-strong">
       <div
         role="row"
-        className="hidden grid-cols-[3rem_minmax(0,2.4fr)_minmax(0,1.1fr)_minmax(0,1fr)_minmax(0,0.9fr)_minmax(0,0.9fr)] gap-4 border-b border-rule py-2.5 md:grid"
+        className="hidden grid-cols-[3rem_minmax(0,2.4fr)_minmax(0,1.1fr)_minmax(0,1fr)_minmax(0,0.9fr)_minmax(0,0.9fr)] gap-4 border-b border-rule py-2.5 lg:grid"
       >
         {["N.º", "Proyecto", "Estado", showClient ? "Cliente" : "Equipo", showClient ? "Equipo" : "Archivos", "Entrega"].map(
           (label) => (
@@ -48,12 +48,12 @@ export function ProjectTable({ projects, role }: { projects: ProjectListItem[]; 
               role="row"
               className={cn(
                 "group relative grid grid-cols-[2.25rem_minmax(0,1fr)] gap-x-3 gap-y-2 border-b border-rule py-4",
-                "md:grid-cols-[3rem_minmax(0,2.4fr)_minmax(0,1.1fr)_minmax(0,1fr)_minmax(0,0.9fr)_minmax(0,0.9fr)] md:items-center md:gap-4",
+                "lg:grid-cols-[3rem_minmax(0,2.4fr)_minmax(0,1.1fr)_minmax(0,1fr)_minmax(0,0.9fr)_minmax(0,0.9fr)] lg:items-center lg:gap-4",
                 "motion-safe:animate-rise",
               )}
               style={{ animationDelay: `${Math.min(index, 8) * 30}ms` }}
             >
-              <span role="cell" className="numeral row-span-4 text-h3 text-ink-2 md:row-span-1 md:text-lead">
+              <span role="cell" className="numeral row-span-5 text-h3 text-ink-2 lg:row-span-1 lg:text-lead">
                 {String(index + 1).padStart(2, "0")}
               </span>
 
@@ -81,7 +81,7 @@ export function ProjectTable({ projects, role }: { projects: ProjectListItem[]; 
               <div role="cell" className="flex min-w-0 items-center gap-2 text-small">
                 {showClient ? (
                   <span className="truncate">
-                    <span className="text-ink-2 md:sr-only">Cliente: </span>
+                    <span className="text-ink-2 lg:sr-only">Cliente: </span>
                     {project.client?.name ?? "—"}
                   </span>
                 ) : teamNames.length > 0 ? (
@@ -113,7 +113,7 @@ export function ProjectTable({ projects, role }: { projects: ProjectListItem[]; 
               </div>
 
               <div role="cell" className={cn("text-small tabular", dueTone[due])}>
-                <span className="text-ink-2 md:sr-only">Entrega: </span>
+                <span className="text-ink-2 lg:sr-only">Entrega: </span>
                 {describeDue(project.dueDate, project.status === "delivered")}
               </div>
             </div>

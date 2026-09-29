@@ -1,6 +1,6 @@
 "use client"
 
-import { LayoutList, Search, SquareKanban, X } from "lucide-react"
+import { LayoutList, Search, SlidersHorizontal, SquareKanban, X } from "lucide-react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useRef, useState, useTransition } from "react"
 
@@ -14,12 +14,23 @@ const selectClass =
   "h-11 rounded-sm border border-input bg-surface px-3 text-small text-ink hover:border-ink-2 focus-visible:border-focus"
 
 // Los filtros viven en la URL: se pueden compartir y sobreviven a recargas.
-export function ProjectFilters({ designers, showDesigner, showView }: { designers: Person[]; showDesigner: boolean; showView: boolean }) {
+export function ProjectFilters({
+  designers,
+  showDesigner,
+  showView,
+  defaultSort = "recent",
+}: {
+  designers: Person[]
+  showDesigner: boolean
+  showView: boolean
+  defaultSort?: "recent" | "due"
+}) {
   const router = useRouter()
   const pathname = usePathname()
   const params = useSearchParams()
   const [isPending, startTransition] = useTransition()
   const [query, setQuery] = useState(params.get("q") ?? "")
+  const [showMore, setShowMore] = useState(false)
   const debounce = useRef<ReturnType<typeof setTimeout>>(undefined)
 
   const update = (patch: Record<string, string | null>) => {
@@ -41,6 +52,7 @@ export function ProjectFilters({ designers, showDesigner, showView }: { designer
 
   const view = params.get("view") === "board" ? "board" : "list"
   const hasFilters = ["q", "status", "designer", "sort"].some((key) => params.has(key))
+  const activeCount = ["status", "designer", "sort"].filter((key) => params.has(key)).length
 
   return (
     <div
@@ -61,6 +73,18 @@ export function ProjectFilters({ designers, showDesigner, showView }: { designer
           />
         </label>
 
+        <Button
+          variant="secondary"
+          className="sm:hidden"
+          aria-expanded={showMore}
+          aria-controls="filtros-extra"
+          onClick={() => setShowMore((v) => !v)}
+        >
+          <SlidersHorizontal aria-hidden="true" />
+          {showMore ? "Ocultar filtros" : `Filtros${activeCount ? ` (${activeCount})` : ""}`}
+        </Button>
+
+        <div id="filtros-extra" className={cn(showMore ? "grid" : "hidden", "gap-3 sm:contents")}>
         <label className="grid gap-1.5">
           <span className="kicker">Estado</span>
           <select
@@ -99,8 +123,8 @@ export function ProjectFilters({ designers, showDesigner, showView }: { designer
           <span className="kicker">Orden</span>
           <select
             className={selectClass}
-            value={params.get("sort") ?? "recent"}
-            onChange={(event) => update({ sort: event.target.value === "recent" ? null : event.target.value })}
+            value={params.get("sort") ?? defaultSort}
+            onChange={(event) => update({ sort: event.target.value === defaultSort ? null : event.target.value })}
           >
             <option value="recent">Más recientes</option>
             <option value="due">Próximos a vencer</option>
@@ -119,6 +143,7 @@ export function ProjectFilters({ designers, showDesigner, showView }: { designer
             Limpiar filtros
           </Button>
         ) : null}
+        </div>
       </div>
 
       {showView ? (

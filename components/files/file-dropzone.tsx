@@ -128,7 +128,7 @@ export function FileDropzone({
       </label>
 
       {rejections.length > 0 ? (
-        <ul role="alert" className="grid gap-1 border-l-4 border-danger bg-danger-subtle px-3 py-2 text-small">
+        <ul role="alert" className="grid gap-1 border-t-2 border-danger bg-danger-subtle px-3 py-2 text-small">
           {rejections.map((message) => (
             <li key={message}>{message}</li>
           ))}

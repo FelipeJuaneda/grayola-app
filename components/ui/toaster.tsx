@@ -17,8 +17,8 @@ export function Toaster() {
           toast:
             "!rounded-md !border !border-rule !bg-surface !text-ink !shadow-overlay !font-sans !text-small",
           description: "!text-ink-2",
-          success: "!border-l-4 !border-l-signal-done",
-          error: "!border-l-4 !border-l-danger",
+          success: "!border-t-2 !border-t-signal-done",
+          error: "!border-t-2 !border-t-danger",
           actionButton: "!bg-ink !text-on-ink !rounded-sm !font-semibold",
           closeButton: "!bg-surface !border-rule !text-ink",
         },

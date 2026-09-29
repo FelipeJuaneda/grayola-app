@@ -40,7 +40,7 @@ function PasswordInput(props: React.ComponentProps<typeof Input>) {
 function FormError({ message }: { message: string | null }) {
   if (!message) return null
   return (
-    <p role="alert" className="border-l-4 border-danger bg-danger-subtle px-3 py-2 text-small font-medium">
+    <p role="alert" className="border-t-2 border-danger bg-danger-subtle px-3 py-2 text-small font-medium">
       {message}
     </p>
   )
@@ -99,7 +99,7 @@ export function SignUpForm() {
 
   if (confirmationSent) {
     return (
-      <div role="status" className="grid gap-3 border-l-4 border-signal-done bg-surface px-4 py-4">
+      <div role="status" className="grid gap-3 border-t-2 border-signal-done bg-surface px-4 py-4">
         <p className="font-semibold">Revisá tu correo</p>
         <p className="text-small text-ink-2">
           Te enviamos un enlace a <strong className="text-ink">{getValues("email")}</strong> para confirmar la cuenta.
