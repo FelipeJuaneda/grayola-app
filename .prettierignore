@@ -1,0 +1,7 @@
+.next
+node_modules
+types/database.ts
+supabase
+package-lock.json
+.impeccable
+docs
