@@ -26,7 +26,8 @@ export function UserMenu({ name, email, roleLabel }: { name: string; email: stri
     <DropdownMenu>
       <DropdownMenuTrigger
         className="inline-flex min-h-11 items-center gap-2.5 rounded-sm px-2 hover:bg-subtle data-[state=open]:bg-subtle"
-        aria-label={`Cuenta de ${name}`}
+        // El nombre accesible empieza con el texto visible (WCAG 2.5.3).
+        aria-label={`${name} ${roleLabel}, menú de cuenta`}
       >
         <Avatar name={name} />
         <span className="hidden text-left leading-tight sm:grid">
