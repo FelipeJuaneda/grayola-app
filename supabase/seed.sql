@@ -1,10 +1,12 @@
 -- =============================================================================
 -- Grayola · seed de desarrollo/demo (NO es migración; idempotente)
--- 6 usuarios de prueba (pass 123456) + proyectos demo.
+-- 6 usuarios de prueba (pass 123456) + 10 proyectos demo con estados, fechas
+-- de entrega e historial. Todo el contenido es ficticio.
 -- Deliberadamente NO restaura datos del backup: contiene cuentas reales de
 -- terceros (evaluadores, otros candidatos) y archivos personales.
 -- =============================================================================
 
+-- ------------------------------------------------------------------ usuarios
 do $$
 declare
   u record;
@@ -43,26 +45,78 @@ begin
   end loop;
 end $$;
 
-insert into public.projects (id, title, description, created_by, assigned_to, created_at)
-values
+-- ------------------------------------------------------------------ proyectos
+create temp table seed_projects (
+  id uuid, title text, description text, created_by uuid, assigned_to uuid[],
+  status public.project_status, due_in_days int, age_days int
+) on commit drop;
+
+insert into seed_projects values
   ('b0000000-0000-4000-8000-000000000001', 'Rebranding Café Brújula',
    'Nuevo sistema de identidad para una cafetería de especialidad: logotipo, paleta, tipografías y aplicaciones en packaging y cartelería.',
-   'a0000000-0000-4000-8000-000000000002',
-   array['a0000000-0000-4000-8000-000000000004','a0000000-0000-4000-8000-000000000005']::uuid[],
-   now() - interval '12 days'),
+   'a0000000-0000-4000-8000-000000000002', array['a0000000-0000-4000-8000-000000000004','a0000000-0000-4000-8000-000000000005']::uuid[], 'in_progress', 9, 12),
   ('b0000000-0000-4000-8000-000000000002', 'Landing de lanzamiento — app de turnos',
    'Landing page para el lanzamiento de una app de reservas: hero, beneficios, pricing y formulario de pre-registro.',
-   'a0000000-0000-4000-8000-000000000002',
-   array['a0000000-0000-4000-8000-000000000006']::uuid[],
-   now() - interval '6 days'),
+   'a0000000-0000-4000-8000-000000000002', array['a0000000-0000-4000-8000-000000000006']::uuid[], 'in_review', 3, 6),
   ('b0000000-0000-4000-8000-000000000003', 'Piezas para redes — campaña de invierno',
    'Set de 12 piezas para Instagram (feed + stories) alineadas a la guía de marca existente.',
-   'a0000000-0000-4000-8000-000000000003',
-   '{}'::uuid[],
-   now() - interval '2 days'),
+   'a0000000-0000-4000-8000-000000000003', '{}'::uuid[], 'pending', 14, 2),
   ('b0000000-0000-4000-8000-000000000004', 'Informe anual 2026',
    'Diseño editorial del informe anual: 40 páginas, infografías y versión web accesible.',
-   'a0000000-0000-4000-8000-000000000003',
-   array['a0000000-0000-4000-8000-000000000004']::uuid[],
-   now() - interval '20 days')
-on conflict (id) do nothing;
+   'a0000000-0000-4000-8000-000000000003', array['a0000000-0000-4000-8000-000000000004']::uuid[], 'delivered', -5, 20),
+  ('b0000000-0000-4000-8000-000000000005', 'Packaging línea orgánica',
+   'Etiquetas y cajas para una línea de cinco productos orgánicos, con versión para e-commerce.',
+   'a0000000-0000-4000-8000-000000000002', array['a0000000-0000-4000-8000-000000000005']::uuid[], 'in_progress', -2, 16),
+  ('b0000000-0000-4000-8000-000000000006', 'Señalética para cowork',
+   'Sistema de señalética para un cowork de tres pisos: direccionales, identificación de salas y normas de uso.',
+   'a0000000-0000-4000-8000-000000000003', '{}'::uuid[], 'pending', null, 1),
+  ('b0000000-0000-4000-8000-000000000007', 'Sistema de íconos para app bancaria',
+   '48 íconos de interfaz en dos pesos, con guía de uso y exportación para iOS y Android.',
+   'a0000000-0000-4000-8000-000000000002', array['a0000000-0000-4000-8000-000000000004','a0000000-0000-4000-8000-000000000006']::uuid[], 'in_review', 6, 10),
+  ('b0000000-0000-4000-8000-000000000008', 'Plantilla de newsletter mensual',
+   'Plantilla de email responsive con módulos reutilizables para el newsletter de la marca.',
+   'a0000000-0000-4000-8000-000000000003', array['a0000000-0000-4000-8000-000000000005']::uuid[], 'delivered', -18, 30),
+  ('b0000000-0000-4000-8000-000000000009', 'Presentación para ronda de inversión',
+   'Deck de 18 slides para inversores: narrativa, gráficos de tracción y anexo financiero.',
+   'a0000000-0000-4000-8000-000000000002', array['a0000000-0000-4000-8000-000000000004']::uuid[], 'in_progress', 2, 5),
+  ('b0000000-0000-4000-8000-000000000010', 'Menú y cartelería — Bodegón del Sur',
+   'Carta impresa y QR, pizarras y vinilos para la vidriera de un bodegón de barrio.',
+   'a0000000-0000-4000-8000-000000000003', '{}'::uuid[], 'pending', 21, 0);
+
+insert into public.projects (id, title, description, created_by, assigned_to, status, due_date, created_at, updated_at)
+select id, title, description, created_by, assigned_to, status,
+       case when due_in_days is null then null else current_date + due_in_days end,
+       now() - make_interval(days => age_days, hours => 3),
+       now() - make_interval(days => greatest(age_days - 1, 0))
+from seed_projects
+on conflict (id) do update set
+  title = excluded.title, description = excluded.description, created_by = excluded.created_by,
+  assigned_to = excluded.assigned_to, status = excluded.status, due_date = excluded.due_date,
+  created_at = excluded.created_at, updated_at = excluded.updated_at;
+
+-- ------------------------------------------------------------------ historial
+-- Los triggers registran eventos "de sistema" al correr el seed; se reemplazan
+-- por un historial curado y coherente con el estado de cada proyecto.
+delete from public.project_events where project_id in (select id from seed_projects);
+
+insert into public.project_events (project_id, actor_id, type, payload, created_at)
+select id, created_by, 'created'::public.project_event_type, jsonb_build_object('title', title),
+       now() - make_interval(days => age_days, hours => 3)
+from seed_projects
+union all
+select id, 'a0000000-0000-4000-8000-000000000001', 'assignees_changed',
+       jsonb_build_object('added', to_jsonb(assigned_to), 'removed', '[]'::jsonb),
+       now() - make_interval(days => age_days, hours => 1)
+from seed_projects where cardinality(assigned_to) > 0
+union all
+select id, assigned_to[1], 'status_changed', '{"from":"pending","to":"in_progress"}'::jsonb,
+       now() - make_interval(days => greatest(age_days - 1, 0), hours => 20)
+from seed_projects where status in ('in_progress', 'in_review', 'delivered')
+union all
+select id, assigned_to[1], 'status_changed', '{"from":"in_progress","to":"in_review"}',
+       now() - make_interval(days => greatest(age_days - 4, 0), hours => 6)
+from seed_projects where status in ('in_review', 'delivered')
+union all
+select id, 'a0000000-0000-4000-8000-000000000001', 'status_changed', '{"from":"in_review","to":"delivered"}',
+       now() - make_interval(days => greatest(age_days - 8, 0), hours => 2)
+from seed_projects where status = 'delivered';
