@@ -27,8 +27,9 @@ function describeAuthError(error: AuthErrorLike) {
     case "signup_disabled":
       return "El registro está deshabilitado en este momento."
     default:
-      return error.status && error.status >= 500
-        ? "El servicio de autenticación no responde. Probá en unos minutos."
+      // status 0 = no hubo respuesta (red, timeout o proyecto pausado).
+      return !error.status || error.status >= 500
+        ? "El servicio no está disponible en este momento. Probá de nuevo en unos minutos."
         : "No pudimos completar la operación. Probá de nuevo."
   }
 }
